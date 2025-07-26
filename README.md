@@ -64,6 +64,12 @@ conda activate ml-env
 python src/core/document_processor.py
 ```
 
+### FOR TESTING THE SAMPLE PDF: Run the following: 
+```bash
+conda activate ml-env
+python tests/test_rag_pipeline.py
+```
+
 ### Run Applications
 ```bash
 # Gradio Interface
