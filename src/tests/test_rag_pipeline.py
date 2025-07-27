@@ -8,19 +8,30 @@ import os
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from src.core.document_processor import DocumentProcessor
-from src.core.embedding_engine import EmbeddingEngine
+from core.document_processor import DocumentProcessor
+from core.embedding_engine import EmbeddingEngine
 
 def test_rag_pipeline():
     """Test the complete RAG pipeline with the rabbit care guide."""
     
     print("Testing RAG Pipeline with Rabbit Care Guide")
     print("=" * 50)
+
+    # ADD THESE DEBUG LINES
+    current_dir = os.path.dirname(__file__)
+    project_root = os.path.join(current_dir, "..", "..")
+    pdf_path = os.path.join(project_root, "test_document.pdf")
+    abs_pdf_path = os.path.abspath(pdf_path)
+    
+    print(f"Current directory: {current_dir}")
+    print(f"PDF path: {abs_pdf_path}")
+    print(f"PDF exists: {os.path.exists(abs_pdf_path)}")
     
     # Process document (adjust path since we're in tests/ folder)
     print("1. Processing document...")
     processor = DocumentProcessor()
-    result = processor.process_document("../test_document.pdf")
+    result = processor.process_document(abs_pdf_path)  # Use abs_pdf_path instead
+    #result = processor.process_document("../../test_document.pdf")
     print(f"   Created {len(result['chunks'])} chunks")
     
     # Create embeddings

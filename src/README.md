@@ -7,7 +7,7 @@ conda activate ml-env
 deactivate
 conda activate ml-env
 python --version #verify that you see Python 3.11.13 
-python tests/test_rag_pipeline.py
+python src/tests/test_rag_pipeline.py
 ```
 
 ### Quick Note for Running: 
