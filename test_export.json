@@ -1,0 +1,13 @@
+{
+  "backend": "chromadb",
+  "collection_name": "test_collection",
+  "embedding_dimension": 384,
+  "vectors": {
+    "ids": [
+      "9b83b0ee-164b-466e-b585-251aec258703",
+      "4435902d-2079-4066-838a-6997f9aa4fa0",
+      "01295058-cb50-48aa-bc83-cb5ec787eb88",
+      "83c1ecb8-5800-43eb-8485-d031fb104c9a",
+      "0ba6ddec-61e5-468b-96b5-f9e256d578a2"
+    ],
+    "embeddings": 

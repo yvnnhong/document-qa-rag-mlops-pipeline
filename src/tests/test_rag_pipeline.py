@@ -1,6 +1,6 @@
 """
 Test script for the complete RAG pipeline.
-Demonstrates document processing, embedding generation, and similarity search.
+Document processing, embedding generation, and similarity search.
 """
 
 import sys
@@ -10,6 +10,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from core.document_processor import DocumentProcessor
 from core.embedding_engine import EmbeddingEngine
+from core.vector_store import VectorStore
 
 def test_rag_pipeline():
     """Test the complete RAG pipeline with the rabbit care guide."""
@@ -17,7 +18,7 @@ def test_rag_pipeline():
     print("Testing RAG Pipeline with Rabbit Care Guide")
     print("=" * 50)
 
-    # ADD THESE DEBUG LINES
+    # Debug paths
     current_dir = os.path.dirname(__file__)
     project_root = os.path.join(current_dir, "..", "..")
     pdf_path = os.path.join(project_root, "test_document.pdf")
@@ -27,11 +28,10 @@ def test_rag_pipeline():
     print(f"PDF path: {abs_pdf_path}")
     print(f"PDF exists: {os.path.exists(abs_pdf_path)}")
     
-    # Process document (adjust path since we're in tests/ folder)
-    print("1. Processing document...")
+    # Process document
+    print("\n1. Processing document...")
     processor = DocumentProcessor()
-    result = processor.process_document(abs_pdf_path)  # Use abs_pdf_path instead
-    #result = processor.process_document("../../test_document.pdf")
+    result = processor.process_document(abs_pdf_path)
     print(f"   Created {len(result['chunks'])} chunks")
     
     # Create embeddings
@@ -49,7 +49,8 @@ def test_rag_pipeline():
         "When should I spay my rabbit?"
     ]
     
-    print("\n3. Testing similarity search...")
+    # Test in-memory similarity search
+    print("\n3. Testing in-memory similarity search...")
     for query in queries:
         print(f"\nQuery: {query}")
         query_embedding = engine.encode_texts([query])
@@ -59,6 +60,39 @@ def test_rag_pipeline():
             print(f"  Match {i+1} (score: {score:.3f}):")
             print(f"  {chunk_texts[idx][:150]}...")
             print()
+
+    # Test vector store integration
+    print("\n4. Testing vector store integration...")
+    
+    # Initialize vector store
+    vector_store = VectorStore(
+        backend="chromadb",
+        collection_name="rabbit_care_guide",
+        persist_directory="./rabbit_vector_db"
+    )
+    
+    # Store embeddings in vector database
+    print("   Storing embeddings in vector database...")
+    chunk_metadata = [{"chunk_id": i, "document": "rabbit_care_guide"} for i in range(len(chunk_texts))]
+    vector_ids = vector_store.add_vectors(embeddings, chunk_texts, chunk_metadata)
+    print(f"   Stored {len(vector_ids)} vectors in ChromaDB")
+    
+    # Test persistent search
+    print("\n   Testing persistent vector search...")
+    for query in queries[:2]:  # Test with first 2 queries
+        print(f"\n   Query: {query}")
+        query_embedding = engine.encode_texts([query])
+        results = vector_store.search(query_embedding[0], k=2)
+        
+        for i, result in enumerate(results):
+            print(f"     Match {i+1} (score: {result.get('score', 'N/A'):.3f}):")
+            print(f"     {result['text'][:100]}...")
+    
+    # Show collection stats
+    stats = vector_store.get_collection_stats()
+    print(f"\nVector store stats: {stats}")
+    
+    print("\nFull RAG pipeline with vector store completed!")
 
 if __name__ == "__main__":
     test_rag_pipeline()
