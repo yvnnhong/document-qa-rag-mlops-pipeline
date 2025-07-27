@@ -5,11 +5,11 @@ Demonstrates document processing, embedding generation, and similarity search.
 
 import sys
 import os
-# Add src to path so we can import our modules
-sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+# Add src to path
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from core.document_processor import DocumentProcessor
-from core.embedding_engine import EmbeddingEngine
+from src.core.document_processor import DocumentProcessor
+from src.core.embedding_engine import EmbeddingEngine
 
 def test_rag_pipeline():
     """Test the complete RAG pipeline with the rabbit care guide."""
@@ -21,14 +21,14 @@ def test_rag_pipeline():
     print("1. Processing document...")
     processor = DocumentProcessor()
     result = processor.process_document("../test_document.pdf")
-    print(f"   ✓ Created {len(result['chunks'])} chunks")
+    print(f"   Created {len(result['chunks'])} chunks")
     
     # Create embeddings
     print("\n2. Generating embeddings...")
     engine = EmbeddingEngine()
     chunk_texts = [chunk['text'] for chunk in result['chunks']]
     embeddings = engine.encode_texts(chunk_texts)
-    print(f"   ✓ Generated embeddings: {embeddings.shape}")
+    print(f"   Generated embeddings: {embeddings.shape}")
     
     # Test queries
     queries = [
