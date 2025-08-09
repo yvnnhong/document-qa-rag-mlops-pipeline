@@ -176,13 +176,4 @@ conda install tensorflow
 # spaCy model download
 python -m spacy download en_core_web_sm
 ```
-
-## License
-
-MIT License
-
 ## Contact
-
-For issues or questions, open a GitHub issue or contact the development team.
-
-Built for intelligent document processing and retrieval-augmented generation.
