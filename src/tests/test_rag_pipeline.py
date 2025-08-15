@@ -68,7 +68,7 @@ def test_rag_pipeline():
     
     # Initialize vector store
     vector_store = VectorStore(
-        backend="chromadb",
+        backend="chromadb", #user can choose chromadb or pinecone for the backend
         collection_name="rabbit_care_guide",
         persist_directory="./rabbit_vector_db"
     )

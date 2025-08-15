@@ -77,7 +77,10 @@ class VectorStore:
         
         # Generate IDs if not provided
         if ids is None:
-            ids = [str(uuid.uuid4()) for _ in range(len(embeddings))]
+            ids = []
+            for i in range(len(embeddings)):
+                new_id = str(uuid.uuid4())
+                ids.append(new_id)
         
         # Prepare metadata
         if metadata is None:
@@ -98,12 +101,14 @@ class VectorStore:
         logger.info(f"Added {len(embeddings)} vectors to {self.backend}")
         return ids
     
+    #note: include_distances means whether or not to include similarity scores
     def search(self, 
               query_embedding: np.ndarray,
               k: int = 5,
               filter_dict: Optional[Dict[str, Any]] = None,
               include_distances: bool = True) -> List[Dict[str, Any]]:
-
+        
+        #reshape to 2d array if 1d
         if query_embedding.ndim == 1:
             query_embedding = query_embedding.reshape(1, -1)
         
