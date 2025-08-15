@@ -1,5 +1,5 @@
 """
-Base vector store class providing unified interface for multiple backends.
+Base vector store class providing unified interface for multiple backends (chromadb, pinecone).
 """
 
 import logging
@@ -16,11 +16,7 @@ logger = logging.getLogger(__name__)
 
 
 class VectorStore:
-    """
-    Unified vector store interface supporting multiple backends.
-    Handles vector storage, retrieval, and similarity search.
-    """
-    
+    #Handles vector storage, retrieval, and similarity search.
     def __init__(self, 
                  backend: str = "chromadb",
                  collection_name: str = "document_chunks",
@@ -28,17 +24,7 @@ class VectorStore:
                  embedding_dimension: int = 384,
                  distance_metric: str = "cosine",
                  **kwargs):
-        """
-        Initialize vector store.
         
-        Args:
-            backend: Vector database backend ("chromadb" or "pinecone")
-            collection_name: Name of the collection/index
-            persist_directory: Directory for persistent storage (ChromaDB)
-            embedding_dimension: Dimension of embeddings
-            distance_metric: Distance metric for similarity ("cosine", "euclidean", "dot")
-            **kwargs: Additional backend-specific arguments
-        """
         self.backend = backend
         self.collection_name = collection_name
         self.persist_directory = Path(persist_directory)
@@ -59,7 +45,7 @@ class VectorStore:
         logger.info(f"Embedding dimension: {embedding_dimension}")
     
     def _initialize_backend(self, **kwargs):
-        """Initialize the selected vector database backend."""
+        #Initialize the selected vector database backend
         if self.backend == "chromadb":
             from .chromadb_backend import ChromaDBBackend
             self.backend_impl = ChromaDBBackend(
@@ -84,18 +70,7 @@ class VectorStore:
                    texts: List[str],
                    metadata: Optional[List[Dict[str, Any]]] = None,
                    ids: Optional[List[str]] = None) -> List[str]:
-        """
-        Add vectors to the store.
-        
-        Args:
-            embeddings: Array of embeddings to store
-            texts: Corresponding text content
-            metadata: Optional metadata for each vector
-            ids: Optional custom IDs (will generate UUIDs if not provided)
-            
-        Returns:
-            List of vector IDs
-        """
+    
         if len(embeddings) != len(texts):
             raise ValueError("Number of embeddings must match number of texts")
         
@@ -127,46 +102,16 @@ class VectorStore:
               k: int = 5,
               filter_dict: Optional[Dict[str, Any]] = None,
               include_distances: bool = True) -> List[Dict[str, Any]]:
-        """
-        Search for similar vectors.
-        
-        Args:
-            query_embedding: Query vector
-            k: Number of results to return
-            filter_dict: Optional metadata filter
-            include_distances: Whether to include similarity scores
-            
-        Returns:
-            List of search results with metadata and optionally distances
-        """
+
         if query_embedding.ndim == 1:
             query_embedding = query_embedding.reshape(1, -1)
         
         return self.backend_impl.search(query_embedding, k, filter_dict, include_distances)
     
     def delete_vectors(self, ids: List[str]) -> bool:
-        """
-        Delete vectors by IDs.
-        
-        Args:
-            ids: List of vector IDs to delete
-            
-        Returns:
-            True if successful
-        """
         return self.backend_impl.delete_vectors(ids)
     
     def update_metadata(self, id: str, metadata: Dict[str, Any]) -> bool:
-        """
-        Update metadata for a vector.
-        
-        Args:
-            id: Vector ID
-            metadata: New metadata
-            
-        Returns:
-            True if successful
-        """
         return self.backend_impl.update_metadata(id, metadata)
     
     def get_collection_stats(self) -> Dict[str, Any]:

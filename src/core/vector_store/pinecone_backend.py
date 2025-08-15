@@ -1,7 +1,5 @@
-"""
-Pinecone backend implementation for vector storage.
-Handles Pinecone-specific operations for cloud-based vector storage.
-"""
+#Pinecone backend implementation for vector storage.
+#Handles Pinecone-specific operations for cloud-based vector storage.
 
 import os
 import logging
@@ -24,25 +22,13 @@ logger = logging.getLogger(__name__)
 
 
 class PineconeBackend:
-    """
-    Pinecone backend implementation for vector storage.
-    Provides cloud-based vector storage with high-performance similarity search.
-    """
-    
+    #uses similarity search similar to ChromaDB backend 
     def __init__(self, 
                  collection_name: str,
                  embedding_dimension: int,
                  distance_metric: str = "cosine",
                  **kwargs):
-        """
-        Initialize Pinecone backend.
         
-        Args:
-            collection_name: Name of the Pinecone index
-            embedding_dimension: Dimension of embeddings
-            distance_metric: Distance metric for similarity search
-            **kwargs: Additional Pinecone-specific arguments
-        """
         self.collection_name = collection_name
         self.embedding_dimension = embedding_dimension
         self.distance_metric = distance_metric
@@ -54,7 +40,7 @@ class PineconeBackend:
         self._initialize_pinecone(**kwargs)
     
     def _initialize_pinecone(self, **kwargs):
-        """Initialize Pinecone client and index."""
+        #Initialize Pinecone client and index
         if not PINECONE_AVAILABLE:
             raise ImportError("Pinecone not available. Install with: pip install pinecone-client")
         
@@ -90,14 +76,6 @@ class PineconeBackend:
             raise
     
     def add_vectors(self, embeddings: np.ndarray, ids: List[str], metadata: List[Dict]):
-        """
-        Add vectors to Pinecone.
-        
-        Args:
-            embeddings: Array of embeddings to store
-            ids: List of vector IDs
-            metadata: List of metadata dictionaries
-        """
         try:
             # Prepare vectors for Pinecone
             vectors = [
@@ -122,18 +100,7 @@ class PineconeBackend:
               k: int, 
               filter_dict: Optional[Dict], 
               include_distances: bool) -> List[Dict]:
-        """
-        Search Pinecone index for similar vectors.
-        
-        Args:
-            query_embedding: Query vector (2D array)
-            k: Number of results to return
-            filter_dict: Optional metadata filter
-            include_distances: Whether to include similarity scores
-            
-        Returns:
-            List of search results with metadata and optionally distances
-        """
+
         try:
             results = self.index.query(
                 vector=query_embedding[0].tolist(),
@@ -164,15 +131,6 @@ class PineconeBackend:
             return []
     
     def delete_vectors(self, ids: List[str]) -> bool:
-        """
-        Delete vectors by IDs from Pinecone.
-        
-        Args:
-            ids: List of vector IDs to delete
-            
-        Returns:
-            True if successful
-        """
         try:
             self.index.delete(ids=ids)
             logger.info(f"Deleted {len(ids)} vectors from Pinecone")
@@ -182,16 +140,6 @@ class PineconeBackend:
             return False
     
     def update_metadata(self, id: str, metadata: Dict[str, Any]) -> bool:
-        """
-        Update metadata for a vector in Pinecone.
-        
-        Args:
-            id: Vector ID
-            metadata: New metadata
-            
-        Returns:
-            True if successful
-        """
         try:
             self.index.update(id=id, metadata=metadata)
             logger.info(f"Updated metadata for vector {id} in Pinecone")
@@ -201,12 +149,6 @@ class PineconeBackend:
             return False
     
     def get_collection_stats(self) -> Dict[str, Any]:
-        """
-        Get statistics about the Pinecone index.
-        
-        Returns:
-            Dictionary containing index statistics
-        """
         try:
             stats = self.index.describe_index_stats()
             return {
@@ -219,12 +161,6 @@ class PineconeBackend:
             return {'total_vectors': 0, 'backend_type': 'pinecone'}
     
     def clear_collection(self) -> bool:
-        """
-        Clear all vectors from the Pinecone index.
-        
-        Returns:
-            True if successful
-        """
         try:
             self.index.delete(delete_all=True)
             logger.info(f"Cleared all vectors from Pinecone index: {self.collection_name}")
@@ -234,17 +170,5 @@ class PineconeBackend:
             return False
     
     def export_vectors(self, output_path: str) -> bool:
-        """
-        Export vectors from Pinecone.
-        
-        Note: Pinecone doesn't support bulk export of vectors.
-        This is a limitation of the Pinecone service.
-        
-        Args:
-            output_path: Path to save the exported data
-            
-        Returns:
-            False (not supported by Pinecone)
-        """
         logger.warning("Export not implemented for Pinecone backend - service limitation")
         return False

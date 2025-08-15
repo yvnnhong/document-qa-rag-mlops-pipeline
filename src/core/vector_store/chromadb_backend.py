@@ -1,7 +1,5 @@
-"""
-ChromaDB backend implementation for vector storage.
-Handles ChromaDB-specific operations for persistent vector storage.
-"""
+#ChromaDB backend implementation for vector storage.
+#Handles ChromaDB-specific operations for persistent vector storage.
 
 import logging
 import json
@@ -23,25 +21,13 @@ logger = logging.getLogger(__name__)
 
 
 class ChromaDBBackend:
-    """
-    ChromaDB backend implementation for vector storage.
-    Provides persistent local vector storage with similarity search.
-    """
-    
+    #Provides persistent local vector storage with similarity search.
     def __init__(self, 
                  collection_name: str,
                  persist_directory: Path,
                  distance_metric: str = "cosine",
                  **kwargs):
-        """
-        Initialize ChromaDB backend.
         
-        Args:
-            collection_name: Name of the ChromaDB collection
-            persist_directory: Directory for persistent storage
-            distance_metric: Distance metric for similarity search
-            **kwargs: Additional ChromaDB-specific arguments
-        """
         self.collection_name = collection_name
         self.persist_directory = persist_directory
         self.distance_metric = distance_metric
@@ -54,7 +40,7 @@ class ChromaDBBackend:
         self._initialize_chromadb(**kwargs)
     
     def _initialize_chromadb(self, **kwargs):
-        """Initialize ChromaDB client and collection."""
+        #Initialize ChromaDB client and collection#
         if not CHROMADB_AVAILABLE:
             raise ImportError("ChromaDB not available. Install with: pip install chromadb")
         
@@ -89,14 +75,6 @@ class ChromaDBBackend:
             raise
     
     def add_vectors(self, embeddings: np.ndarray, ids: List[str], metadata: List[Dict]):
-        """
-        Add vectors to ChromaDB.
-        
-        Args:
-            embeddings: Array of embeddings to store
-            ids: List of vector IDs
-            metadata: List of metadata dictionaries
-        """
         try:
             self.collection.add(
                 embeddings=embeddings.tolist(),
@@ -114,18 +92,6 @@ class ChromaDBBackend:
               k: int, 
               filter_dict: Optional[Dict], 
               include_distances: bool) -> List[Dict]:
-        """
-        Search ChromaDB collection for similar vectors.
-        
-        Args:
-            query_embedding: Query vector (2D array)
-            k: Number of results to return
-            filter_dict: Optional metadata filter
-            include_distances: Whether to include similarity scores
-            
-        Returns:
-            List of search results with metadata and optionally distances
-        """
         try:
             results = self.collection.query(
                 query_embeddings=query_embedding.tolist(),
@@ -161,15 +127,6 @@ class ChromaDBBackend:
             return []
     
     def delete_vectors(self, ids: List[str]) -> bool:
-        """
-        Delete vectors by IDs from ChromaDB.
-        
-        Args:
-            ids: List of vector IDs to delete
-            
-        Returns:
-            True if successful
-        """
         try:
             self.collection.delete(ids=ids)
             logger.info(f"Deleted {len(ids)} vectors from ChromaDB")
@@ -179,29 +136,10 @@ class ChromaDBBackend:
             return False
     
     def update_metadata(self, id: str, metadata: Dict[str, Any]) -> bool:
-        """
-        Update metadata for a vector in ChromaDB.
-        
-        Note: ChromaDB doesn't support direct metadata updates.
-        Would need to delete and re-add the vector.
-        
-        Args:
-            id: Vector ID
-            metadata: New metadata
-            
-        Returns:
-            False (not supported by ChromaDB)
-        """
         logger.warning("ChromaDB doesn't support metadata updates without re-adding")
         return False
     
     def get_collection_stats(self) -> Dict[str, Any]:
-        """
-        Get statistics about the ChromaDB collection.
-        
-        Returns:
-            Dictionary containing collection statistics
-        """
         try:
             count = self.collection.count()
             return {
@@ -213,12 +151,6 @@ class ChromaDBBackend:
             return {'total_vectors': 0, 'backend_type': 'chromadb'}
     
     def clear_collection(self) -> bool:
-        """
-        Clear all vectors from the ChromaDB collection.
-        
-        Returns:
-            True if successful
-        """
         try:
             # Reset collection by deleting and recreating
             self.client.delete_collection(self.collection_name)
@@ -234,15 +166,6 @@ class ChromaDBBackend:
             return False
     
     def export_vectors(self, output_path: str) -> bool:
-        """
-        Export all vectors and metadata from ChromaDB to a file.
-        
-        Args:
-            output_path: Path to save the exported data
-            
-        Returns:
-            True if successful
-        """
         try:
             # Get all data from ChromaDB
             results = self.collection.get(include=['documents', 'metadatas', 'embeddings'])

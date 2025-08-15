@@ -1,12 +1,9 @@
-"""
-Vector store package for RAG system.
-Provides unified interface for multiple vector database backends.
-"""
+#Vector store package for RAG system.
+#Provides unified interface for multiple vector database backends.
 
 from .base import VectorStore
 from .chromadb_backend import ChromaDBBackend
 from .pinecone_backend import PineconeBackend
-from .utils import VectorStoreUtils
 
 __all__ = [
     'VectorStore',
