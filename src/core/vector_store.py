@@ -2,9 +2,6 @@
 Vector store implementation for RAG system.
 Supports ChromaDB and Pinecone for persistent vector storage and similarity search.
 """
-#TL;DR: 
-#vector_store.py creates a unified interface for vector databases (chromadb, pinecone)
-#so that the RAG system can easily swap backends 
 
 import os
 import logging
@@ -465,71 +462,3 @@ class VectorStore:
         except Exception as e:
             logger.error(f"Failed to export vectors: {str(e)}")
             return False
-
-
-def main():
-    """Test the vector store implementation."""
-    
-    # Test data
-    test_embeddings = np.random.random((5, 384)).astype(np.float32)
-    test_texts = [
-        "This is the first test document about machine learning.",
-        "Second document discusses natural language processing.",
-        "Third document covers computer vision topics.",
-        "Fourth document is about data science methodologies.",
-        "Fifth document explores deep learning architectures."
-    ]
-    
-    test_metadata = [
-        {"category": "ML", "topic": "general"},
-        {"category": "NLP", "topic": "processing"},
-        {"category": "CV", "topic": "vision"},
-        {"category": "DS", "topic": "methods"},
-        {"category": "DL", "topic": "architecture"}
-    ]
-    
-    # Test ChromaDB
-    print("Testing ChromaDB Vector Store")
-    print("=" * 40)
-    
-    try:
-        # Initialize vector store
-        vector_store = VectorStore(
-            backend="chromadb",
-            collection_name="test_collection",
-            persist_directory="./test_vector_db"
-        )
-        
-        # Add vectors
-        print("Adding test vectors...")
-        ids = vector_store.add_vectors(test_embeddings, test_texts, test_metadata)
-        print(f"Added {len(ids)} vectors")
-        
-        # Get stats
-        stats = vector_store.get_collection_stats()
-        print(f"Collection stats: {stats}")
-        
-        # Test search
-        print("\nTesting similarity search...")
-        query_embedding = np.random.random((1, 384)).astype(np.float32)
-        results = vector_store.search(query_embedding, k=3)
-        
-        print(f"Found {len(results)} similar vectors:")
-        for i, result in enumerate(results):
-            print(f"{i+1}. Score: {result.get('score', 'N/A'):.3f}")
-            print(f"   Text: {result['text'][:50]}...")
-            print(f"   Metadata: {result['metadata']}")
-        
-        # Test export
-        print("\nExporting vectors...")
-        if vector_store.export_vectors("test_export.json"):
-            print("Export successful")
-        
-        print("\nVector store test completed successfully!")
-        
-    except Exception as e:
-        print(f"Test failed: {str(e)}")
-
-
-if __name__ == "__main__":
-    main()
