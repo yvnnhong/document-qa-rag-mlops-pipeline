@@ -109,6 +109,7 @@ class VectorStore:
               include_distances: bool = True) -> List[Dict[str, Any]]:
         
         #reshape to 2d array if 1d
+        #-1 means that the number of columns is automatically detected (generally speaking it is 384)
         if query_embedding.ndim == 1:
             query_embedding = query_embedding.reshape(1, -1)
         

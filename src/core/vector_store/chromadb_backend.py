@@ -19,7 +19,6 @@ except ImportError:
 # Configure logging
 logger = logging.getLogger(__name__)
 
-
 class ChromaDBBackend:
     #Provides persistent local vector storage with similarity search.
     def __init__(self, 
@@ -170,12 +169,19 @@ class ChromaDBBackend:
             # Get all data from ChromaDB
             results = self.collection.get(include=['documents', 'metadatas', 'embeddings'])
             
+            embeddings_list = []
+            for emb in results['embeddings']:
+                if hasattr(emb, 'tolist'):
+                    embeddings_list.append(emb.tolist())
+                else:
+                    embeddings_list.append(emb)
+
             export_data = {
                 'backend': 'chromadb',
                 'collection_name': self.collection_name,
                 'vectors': {
                     'ids': results['ids'],
-                    'embeddings': [emb.tolist() if hasattr(emb, 'tolist') else emb for emb in results['embeddings']],
+                    'embeddings': embeddings_list,
                     'documents': results['documents'],
                     'metadatas': results['metadatas']
                 }
