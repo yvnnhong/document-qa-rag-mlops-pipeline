@@ -1,6 +1,5 @@
-"""
-Base vector store class providing unified interface for multiple backends (chromadb, pinecone).
-"""
+#Base vector store class providing unified interface for 
+#multiple backends (chromadb, pinecone).
 
 import logging
 import uuid
@@ -115,7 +114,7 @@ class VectorStore:
         return self.backend_impl.update_metadata(id, metadata)
     
     def get_collection_stats(self) -> Dict[str, Any]:
-        """Get statistics about the collection."""
+        #Get statistics about the collection
         stats = self.backend_impl.get_collection_stats()
         stats.update({
             'backend': self.backend,
@@ -125,9 +124,9 @@ class VectorStore:
         return stats
     
     def clear_collection(self) -> bool:
-        """Clear all vectors from the collection."""
+        #Clear all vectors from the collection
         return self.backend_impl.clear_collection()
     
     def export_vectors(self, output_path: str) -> bool:
-        """Export all vectors and metadata to a file."""
+        #Export all vectors and metadata to a file
         return self.backend_impl.export_vectors(output_path)
