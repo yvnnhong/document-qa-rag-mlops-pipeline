@@ -1,7 +1,6 @@
-"""
-Document processing package for RAG system.
-Handles PDF/text extraction, cleaning, and chunking for semantic search.
-"""
+#Document processing package for RAG system.
+#Handles PDF/text extraction, cleaning, and chunking for semantic search.
+#see document_processor/README.md for more 
 
 from .pipeline import DocumentProcessor
 from .extractors import PDFExtractor, TextExtractor
