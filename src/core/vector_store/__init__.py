@@ -9,7 +9,6 @@ __all__ = [
     'VectorStore',
     'ChromaDBBackend', 
     'PineconeBackend',
-    'VectorStoreUtils'
 ]
 
 __version__ = '1.0.0'
