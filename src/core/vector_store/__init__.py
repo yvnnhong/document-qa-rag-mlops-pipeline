@@ -11,4 +11,3 @@ __all__ = [
     'PineconeBackend',
 ]
 
-__version__ = '1.0.0'
