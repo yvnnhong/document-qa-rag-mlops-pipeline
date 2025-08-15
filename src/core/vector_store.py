@@ -2,6 +2,9 @@
 Vector store implementation for RAG system.
 Supports ChromaDB and Pinecone for persistent vector storage and similarity search.
 """
+#TL;DR: 
+#vector_store.py creates a unified interface for vector databases (chromadb, pinecone)
+#so that the RAG system can easily swap backends 
 
 import os
 import logging
