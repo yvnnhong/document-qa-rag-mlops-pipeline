@@ -1,7 +1,6 @@
-"""
-Document processing module for RAG system.
-Handles PDF/text extraction, cleaning, and chunking for semantic search.
-"""
+#document_processor.py: 
+#takes documents (PDFs, text files) and converts them into small, searchable
+#chunks for the RAG system 
 
 import os
 import re
