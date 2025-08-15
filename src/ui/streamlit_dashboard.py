@@ -21,7 +21,7 @@ sys.path.append(str(src_dir))
 try:
     from core.document_processor import DocumentProcessor
     from core.embedding_engine import EmbeddingEngine
-    from core.vector_store import VectorStore
+    from core.vector_store.vector_store import VectorStore
     from core.llm_integration import LLMIntegration
 except ImportError as e:
     st.error(f"Import error: {e}. Make sure you're running from the project root.")

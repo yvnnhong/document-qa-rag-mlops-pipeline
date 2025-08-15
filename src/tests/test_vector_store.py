@@ -10,7 +10,7 @@ import numpy as np
 # Add src to path
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
-from core.vector_store import VectorStore
+from core.vector_store.vector_store import VectorStore
 
 
 def test_vector_store():
