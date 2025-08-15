@@ -75,9 +75,13 @@ class ChromaDBBackend:
     
     def add_vectors(self, embeddings: np.ndarray, ids: List[str], metadata: List[Dict]):
         try:
+            documents_list = []
+            for meta in metadata: 
+                documents_list.append(meta['text'])
+                
             self.collection.add(
                 embeddings=embeddings.tolist(),
-                documents=[meta['text'] for meta in metadata],
+                documents=documents_list,
                 metadatas=metadata,
                 ids=ids
             )
