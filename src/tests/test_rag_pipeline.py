@@ -37,7 +37,9 @@ def test_rag_pipeline():
     # Create embeddings
     print("\n2. Generating embeddings...")
     engine = EmbeddingEngine()
-    chunk_texts = [chunk['text'] for chunk in result['chunks']]
+    chunk_texts = []
+    for chunk in result['chunks']:
+        chunk_texts.append(chunk['text'])
     embeddings = engine.encode_texts(chunk_texts)
     print(f"   Generated embeddings: {embeddings.shape}")
     
