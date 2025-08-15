@@ -75,7 +75,13 @@ def test_rag_pipeline():
     
     # Store embeddings in vector database
     print("   Storing embeddings in vector database...")
-    chunk_metadata = [{"chunk_id": i, "document": "rabbit_care_guide"} for i in range(len(chunk_texts))]
+    chunk_metadata = []
+    for i in range(len(chunk_texts)):
+        metadata = {
+            "chunk_id": i,
+            "document": "rabbit_care_guide"
+        }
+        chunk_metadata.append(metadata)
     vector_ids = vector_store.add_vectors(embeddings, chunk_texts, chunk_metadata)
     print(f"   Stored {len(vector_ids)} vectors in ChromaDB")
     
