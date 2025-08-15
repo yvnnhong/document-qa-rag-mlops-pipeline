@@ -1,13 +1,12 @@
-#Base vector store class providing unified interface for 
-#multiple backends (chromadb, pinecone).
-
-import logging
-import uuid
-from typing import List, Dict, Any, Optional
-import numpy as np
-from datetime import datetime
-from pathlib import Path
-import hashlib
+#this file, base.py, creates a singular interface that works with multiple 
+#backends (chromadb, pinecone)
+import logging #for debug/info msgs
+import uuid #to generate unique IDs for vectors 
+from typing import List, Dict, Any, Optional #for type hints 
+import numpy as np #used for handling embedding arrays 
+from datetime import datetime #track timestamps for metadata 
+from pathlib import Path #file + directory operations 
+import hashlib #create text hashes 
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -17,9 +16,9 @@ logger = logging.getLogger(__name__)
 class VectorStore:
     #Handles vector storage, retrieval, and similarity search.
     def __init__(self, 
-                 backend: str = "chromadb",
+                 backend: str = "chromadb", #default to chromadb bcuz it's free + no internet connection required
                  collection_name: str = "document_chunks",
-                 persist_directory: str = "./vector_db",
+                 persist_directory: str = "./vector_db", #where to save chromadb files
                  embedding_dimension: int = 384,
                  distance_metric: str = "cosine",
                  **kwargs):
@@ -30,10 +29,13 @@ class VectorStore:
         self.embedding_dimension = embedding_dimension
         self.distance_metric = distance_metric
         
-        # Backend implementation instance
+        # Backend implementation instance 
+        # (initialize backend placeholder that will 
+        # hold actual chromadb/pinecone implementation)
         self.backend_impl = None
         
-        # Create persist directory
+        # Create persist directory -- create folder for storing chromadb files if it doesnt
+        #already exist 
         self.persist_directory.mkdir(exist_ok=True)
         
         # Initialize the selected backend
