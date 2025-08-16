@@ -1,7 +1,6 @@
-"""
-Test script for the complete RAG pipeline.
-Document processing, embedding generation, similarity search, and LLM response generation.
-"""
+#Test script for the complete RAG pipeline.
+#Document processing, embedding generation, similarity search, and LLM response generation.
+
 import sys
 import os
 # Add src to path
@@ -12,8 +11,8 @@ from core.embedding_engine import EmbeddingEngine
 from core.vector_store import VectorStore
 from core.llm_integration import LLMIntegration
 
+#Test the complete RAG pipeline with the rabbit care guide
 def test_rag_pipeline():
-    """Test the complete RAG pipeline with the rabbit care guide."""
     
     print("Testing COMPLETE RAG Pipeline with Rabbit Care Guide")
     print("=" * 60)
