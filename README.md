@@ -227,3 +227,5 @@ python -m spacy download en_core_web_sm
 **ChromaDB Permissions**: Ensure write permissions in the persist directory.
 
 **API Keys**: Set environment variables for OpenAI and Pinecone if using those backends.
+
+**Creator**: Yvonne Hong (Github: @yvnnhong)
