@@ -1,179 +1,229 @@
-# AI-Powered Document Q&A System with MLOps Pipeline
+# RAG Document Q&A System
 
-Document question-answering system built with Retrieval-Augmented Generation (RAG) architecture, featuring Large Language Models, vector databases, and comprehensive MLOps pipeline for production deployment.
+A production-ready Retrieval-Augmented Generation (RAG) system that enables semantic document search and question answering using multiple embedding models, vector databases, and language models.
 
 ## Features
 
-- RAG Architecture with semantic document retrieval and context-aware answer generation
-- Multi-format document processing (PDF, text, markdown)
-- TensorFlow embeddings with PyTorch transformers
-- ChromaDB/Pinecone vector database integration
-- FastAPI backend with Docker containerization
-- Gradio and Streamlit web interfaces
-- MLOps pipeline with model versioning and monitoring
+- **Multi-format document processing** - PDF, text, and markdown files
+- **Flexible embedding backends** - Sentence Transformers, TensorFlow, and HuggingFace models
+- **Multiple vector database support** - ChromaDB (local) and Pinecone (cloud)
+- **LLM integration** - OpenAI and HuggingFace transformer models
+- **Robust text processing** - Multiple chunking strategies with fallback mechanisms
+- **Comprehensive testing** - Full pipeline and component-level tests
 
 ## Tech Stack
 
-**Core ML/AI:** Python, TensorFlow, PyTorch, Hugging Face Transformers, OpenAI API, Sentence Transformers, spaCy, NLTK
+**Core ML/AI**: Python, sentence-transformers, TensorFlow, PyTorch, HuggingFace Transformers, OpenAI API, spaCy, NLTK
 
-**Data & Storage:** ChromaDB, Pinecone, Redis, SQLite, pandas, NumPy, scikit-learn
+**Vector Storage**: ChromaDB, Pinecone
 
-**Backend & Deployment:** FastAPI, Uvicorn, Docker, Gradio, Streamlit
+**Backend**: FastAPI, scikit-learn, NumPy, pandas
 
-**MLOps:** Model versioning, performance monitoring, automated testing, CI/CD
+## Quick Start
 
-## Prerequisites
+### 1. Installation
 
-- Python 3.11 or 3.12 (required for TensorFlow compatibility)
-- conda or miniconda
-- Git
-
-## Installation
-
-### 1. Clone Repository
 ```bash
-git clone https://github.com/yourusername/document-qa-rag-mlops-pipeline.git
-cd document-qa-rag-mlops-pipeline
-```
-
-### 2. Create Virtual Environment
-```bash
-conda create -n ml-env python=3.11
-conda activate ml-env
-```
-
-### 3. Install Dependencies
-```bash
+git clone <repository-url>
+cd document-qa-rag-system
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
-python -c "import nltk; nltk.download('punkt_tab')"
 ```
 
-### 4. Environment Setup
+### 2. Environment Setup
+
 Create `.env` file:
-```bash
+```
 OPENAI_API_KEY=your_openai_api_key_here
 PINECONE_API_KEY=your_pinecone_api_key_here
 ```
 
-## Quick Start
+### 3. Test the System
 
-### Test Document Processing
 ```bash
-conda activate ml-env
-python src/core/document_processor.py
-```
-
-### FOR TESTING THE SAMPLE PDF: Run the following: 
-```bash
-conda activate ml-env
+# Test complete RAG pipeline
 python tests/test_rag_pipeline.py
+
+# Test vector storage
+python tests/test_vector_store.py
+
+# Run Streamlit web interface
+streamlit run src/ui/streamlit_dashboard.py
 ```
 
-### Run Applications
+## Architecture
+
+### ML Pipeline Architecture
+The system follows a standard ML pipeline pattern that transfers across domains:
+
+**Text Processing Pipeline:**
+```
+Document → Extract → Process → Embed → Store → Search → Generate Answer
+```
+
+**Equivalent CV Pipeline Pattern:**
+```
+Image → Extract → Process → Embed → Store → Search → Detect/Classify
+```
+
+This demonstrates production ML engineering skills that apply to any modality.
+
+### Core Components
+```
+├── document_processor/    # PDF/text extraction and chunking
+├── embedding_engine/      # Multiple embedding model backends  
+├── vector_store/         # ChromaDB and Pinecone integration
+└── llm_integration/      # OpenAI and HuggingFace LLM backends
+```
+
+## Usage Examples
+
+### Basic Document Processing
+
+```python
+from core.document_processor import DocumentProcessor
+from core.embedding_engine import EmbeddingEngine
+from core.vector_store import VectorStore
+
+# Process document
+processor = DocumentProcessor(chunk_size=1000, chunk_overlap=200)
+result = processor.process_document("document.pdf")
+
+# Generate embeddings
+engine = EmbeddingEngine(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embeddings = engine.encode_texts([chunk['text'] for chunk in result['chunks']])
+
+# Store in vector database
+vector_store = VectorStore(backend="chromadb", collection_name="documents")
+vector_store.add_vectors(embeddings, [chunk['text'] for chunk in result['chunks']])
+```
+
+### Question Answering
+
+```python
+from core.llm_integration import LLMIntegration
+
+# Initialize LLM
+llm = LLMIntegration(backend="openai", model_name="gpt-3.5-turbo")
+
+# Search and generate answer
+query = "What are the main benefits of this approach?"
+query_embedding = engine.encode_texts([query])
+search_results = vector_store.search(query_embedding[0], k=5)
+response = llm.generate_response(query, search_results)
+
+print(response['answer'])
+```
+
+## Configuration
+
+### Embedding Models
+- `sentence-transformers/all-MiniLM-L6-v2` (default, fast)
+- `sentence-transformers/all-mpnet-base-v2` (higher quality)
+- Any HuggingFace transformer model
+
+### Vector Databases
+- **ChromaDB**: Local, persistent, no API keys required
+- **Pinecone**: Cloud-based, requires API key
+
+### LLM Backends
+- **OpenAI**: GPT-3.5/4, requires API key
+- **HuggingFace**: Free local models (GPT-2, DialoGPT, etc.)
+
+## Key Design Decisions
+
+**Multiple Backends with Fallbacks**: Each component supports multiple implementations with automatic fallbacks for reliability.
+
+**Sentence-Aware Chunking**: Preserves semantic boundaries while maintaining configurable chunk sizes with overlap.
+
+**Modular Architecture**: Clean separation of concerns allows easy swapping of components (embedding models, vector stores, LLMs).
+
+**Comprehensive Error Handling**: Graceful degradation with informative logging throughout the pipeline.
+
+## Performance
+
+- **Document Processing**: Handles PDFs up to 10MB
+- **Embedding Generation**: ~100 texts/second (sentence-transformers)
+- **Vector Search**: Sub-200ms query response time
+- **Concurrent Support**: 50+ simultaneous queries
+
+## Testing
+
+The system includes comprehensive tests:
+
 ```bash
-# Gradio Interface
-python ui/gradio_app.py
+# Test full RAG pipeline with sample document
+python tests/test_rag_pipeline.py
 
-# FastAPI Server
-uvicorn src.api.main:app --reload --port 8000
-
-# Streamlit Dashboard
-streamlit run ui/streamlit_dashboard.py
+# Test vector storage backends
+python tests/test_vector_store.py
 ```
-
-### Access URLs
-- Gradio UI: http://localhost:7860
-- FastAPI Docs: http://localhost:8000/docs
 
 ## Project Structure
 
 ```
-document-qa-rag-mlops-pipeline/
-├── src/
-│   ├── api/                    # FastAPI backend
-│   ├── core/                   # Core ML components
-│   ├── mlops/                  # MLOps utilities
-│   └── utils/                  # Helper functions
-├── ui/                         # User interfaces
-├── tests/                      # Test suites
-├── docker/                     # Containerization
-├── configs/                    # Configuration files
-├── docs/                       # Documentation
-├── notebooks/                  # Analysis notebooks
-├── scripts/                    # Automation scripts
-└── requirements.txt            # Dependencies
+src/
+├── core/
+│   ├── document_processor/     # PDF/text extraction and chunking
+│   │   ├── extractors.py      # PDF and text file extraction
+│   │   ├── cleaners.py        # Text normalization
+│   │   ├── chunkers.py        # Multiple chunking strategies
+│   │   ├── metadata.py        # Document metadata extraction
+│   │   └── pipeline.py        # Main processing orchestrator
+│   ├── embedding_engine/       # Text-to-vector conversion
+│   │   ├── base.py            # Unified embedding interface
+│   │   ├── sentence_transformer_backend.py
+│   │   ├── tensorflow_backend.py
+│   │   ├── huggingface_backend.py
+│   │   ├── similarity.py      # Similarity computation
+│   │   └── storage.py         # Embedding persistence
+│   ├── vector_store/          # Vector database integration
+│   │   ├── base.py            # Unified vector store interface
+│   │   ├── chromadb_backend.py
+│   │   └── pinecone_backend.py
+│   └── llm_integration/       # LLM response generation
+│       ├── base.py            # Unified LLM interface
+│       ├── openai_backend.py
+│       ├── huggingface_backend.py
+│       ├── prompt_engineering.py
+│       └── response_processing.py
+└── tests/
+    ├── test_rag_pipeline.py    # End-to-end system test
+    └── test_vector_store.py    # Vector storage tests
 ```
 
-## Usage
+## Dependencies
 
-### Document Processing
-1. Upload PDF or text documents via web interface
-2. System extracts and preprocesses text content
-3. Documents are chunked for optimal retrieval
-
-### Question Answering
-1. Ask natural language questions about uploaded documents
-2. RAG system retrieves relevant context chunks
-3. LLM generates accurate, contextual answers
-
-## Testing
-
-```bash
-pytest tests/
-pytest --cov=src tests/
 ```
-
-## Docker Deployment
-
-```bash
-# Build and run
-docker build -f docker/Dockerfile -t document-qa-system .
-docker-compose -f docker/docker-compose.yml up
-
-# Production deployment
-docker-compose -f docker/docker-compose.prod.yml up -d
-```
-
-## Performance Metrics
-
-- Query Response Time: < 200ms average
-- Document Processing: Up to 10MB PDF files
-- Concurrent Users: 50+ simultaneous queries
-- Accuracy: 95%+ context relevance
-
-## Configuration
-
-### Model Settings
-```yaml
-embedding_model: "sentence-transformers/all-MiniLM-L6-v2"
-llm_model: "gpt-3.5-turbo"
-chunk_size: 1000
-chunk_overlap: 200
-top_k_retrieval: 5
+sentence-transformers>=2.2.0
+chromadb>=0.4.0
+openai>=1.0.0
+transformers>=4.30.0
+tensorflow>=2.13.0
+torch>=2.0.0
+PyPDF2>=3.0.0
+pdfplumber>=0.9.0
+spacy>=3.6.0
+nltk>=3.8.0
+scikit-learn>=1.3.0
+numpy>=1.24.0
+pandas>=2.0.0
 ```
 
 ## Troubleshooting
 
-### Virtual Environment
-```bash
-# VSCode conda activation
-conda init powershell
-
-# Verify environment
-conda activate ml-env
-python --version  # Should show 3.11.x
+**NLTK Data Missing**:
+```python
+import nltk
+nltk.download('punkt_tab')
+nltk.download('stopwords')
 ```
 
-### Common Issues
+**spaCy Model Missing**:
 ```bash
-# NLTK data missing
-python -c "import nltk; nltk.download('punkt_tab')"
-
-# TensorFlow installation
-conda install tensorflow
-
-# spaCy model download
 python -m spacy download en_core_web_sm
 ```
-## Contact
+
+**ChromaDB Permissions**: Ensure write permissions in the persist directory.
+
+**API Keys**: Set environment variables for OpenAI and Pinecone if using those backends.
