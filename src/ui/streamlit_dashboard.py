@@ -1,7 +1,5 @@
-"""
-Streamlit dashboard for the RAG Document Q&A System.
-Features document upload, real-time chat, and comprehensive system monitoring.
-"""
+#Streamlit dashboard for the RAG Document Q&A System.
+#Features document upload, real-time chat, and comprehensive system monitoring.
 
 import streamlit as st
 import sys

@@ -9,7 +9,7 @@ sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from core.document_processor import DocumentProcessor
 from core.embedding_engine import EmbeddingEngine
-from core.vector_store.vector_store import VectorStore
+from core.vector_store import VectorStore
 from core.llm_integration import LLMIntegration
 
 def test_rag_pipeline():
